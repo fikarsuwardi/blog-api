@@ -36,6 +36,10 @@ func main() {
 	// Health check endpoint
 	router.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
 
+	// Swagger documentation
+	router.HandleFunc("/swagger.json", handlers.SwaggerJSON).Methods("GET")
+	router.HandleFunc("/swagger", handlers.SwaggerUI).Methods("GET")
+
 	// API routes (akan ditambahkan di langkah selanjutnya)
 	api := router.PathPrefix("/api").Subrouter()
 
