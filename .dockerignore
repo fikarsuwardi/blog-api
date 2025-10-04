@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+docs/
+
+# Environment
+.env
+.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Test files
+*_test.go
+
+# Binaries
+*.exe
+blog-api
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
