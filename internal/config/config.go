@@ -18,7 +18,7 @@ type Config struct {
 }
 
 func LoadConfig() *Config {
-	// Load .env file jika ada (untuk development)
+	// Load .env file
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using environment variables")
 	}
@@ -29,7 +29,7 @@ func LoadConfig() *Config {
 		DBUser:     getEnv("DB_USER", "postgres"),
 		DBPassword: getEnv("DB_PASSWORD", "postgres"),
 		DBName:     getEnv("DB_NAME", "blogdb"),
-		JWTSecret:  getEnv("JWT_SECRET", "your-secret-key"),
+		JWTSecret:  getEnv("JWT_SECRET", "abcd1234"),
 		ServerPort: getEnv("SERVER_PORT", "8080"),
 	}
 }
