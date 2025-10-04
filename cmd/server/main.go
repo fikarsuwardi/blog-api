@@ -1,5 +1,50 @@
 package main
 
+import (
+	"log"
+	"net/http"
+
+	"blog-api/internal/config"
+	"blog-api/internal/database"
+	"blog-api/internal/handlers"
+
+	"github.com/gorilla/mux"
+)
+
 func main() {
-	// Akan diisi di langkah berikutnya
+	// Load konfigurasi
+	cfg := config.LoadConfig()
+
+	// Koneksi ke database
+	if err := database.Connect(cfg); err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
+
+	// Jalankan migration dan seed
+	if err := database.Migrate(); err != nil {
+		log.Fatal("Failed to migrate database:", err)
+	}
+
+	if err := database.SeedData(); err != nil {
+		log.Fatal("Failed to seed data:", err)
+	}
+
+	// Setup router
+	router := mux.NewRouter()
+
+	// Health check endpoint
+	router.HandleFunc("/health", handlers.HealthCheck).Methods("GET")
+
+	// API routes (akan ditambahkan di langkah selanjutnya)
+	api := router.PathPrefix("/api").Subrouter()
+
+	// Auth routes
+	api.HandleFunc("/register", handlers.Register).Methods("POST")
+	api.HandleFunc("/login", handlers.Login).Methods("POST")
+
+	// Start server
+	log.Printf("Server starting on port %s", cfg.ServerPort)
+	if err := http.ListenAndServe(":"+cfg.ServerPort, router); err != nil {
+		log.Fatal("Failed to start server:", err)
+	}
 }
