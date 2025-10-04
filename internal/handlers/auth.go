@@ -36,9 +36,29 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validasi input
-	if req.Email == "" || req.Password == "" || req.Name == "" {
-		respondError(w, http.StatusBadRequest, "Email, password, and name are required")
+	// Validasi input menggunakan validator
+	valid, errMsg := ValidateRequired(map[string]string{
+		"email":    req.Email,
+		"password": req.Password,
+		"name":     req.Name,
+	})
+	if !valid {
+		HandleValidationError(w, errMsg)
+		return
+	}
+
+	if !ValidateEmail(req.Email) {
+		HandleValidationError(w, "Invalid email format")
+		return
+	}
+
+	if !ValidatePassword(req.Password) {
+		HandleValidationError(w, "Password must be at least 6 characters")
+		return
+	}
+
+	if !ValidateStringLength(req.Name, 2, 100) {
+		HandleValidationError(w, "Name must be between 2 and 100 characters")
 		return
 	}
 
@@ -82,8 +102,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validasi input
-	if req.Email == "" || req.Password == "" {
-		respondError(w, http.StatusBadRequest, "Email and password are required")
+	valid, errMsg := ValidateRequired(map[string]string{
+		"email":    req.Email,
+		"password": req.Password,
+	})
+	if !valid {
+		HandleValidationError(w, errMsg)
 		return
 	}
 

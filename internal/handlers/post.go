@@ -32,8 +32,22 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validasi input
-	if req.Title == "" || req.Content == "" {
-		respondError(w, http.StatusBadRequest, "Title and content are required")
+	valid, errMsg := ValidateRequired(map[string]string{
+		"title":   req.Title,
+		"content": req.Content,
+	})
+	if !valid {
+		HandleValidationError(w, errMsg)
+		return
+	}
+
+	if !ValidateStringLength(req.Title, 3, 200) {
+		HandleValidationError(w, "Title must be between 3 and 200 characters")
+		return
+	}
+
+	if !ValidateStringLength(req.Content, 10, 10000) {
+		HandleValidationError(w, "Content must be between 10 and 10000 characters")
 		return
 	}
 
@@ -120,8 +134,22 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validasi input
-	if req.Title == "" || req.Content == "" {
-		respondError(w, http.StatusBadRequest, "Title and content are required")
+	valid, errMsg := ValidateRequired(map[string]string{
+		"title":   req.Title,
+		"content": req.Content,
+	})
+	if !valid {
+		HandleValidationError(w, errMsg)
+		return
+	}
+
+	if !ValidateStringLength(req.Title, 3, 200) {
+		HandleValidationError(w, "Title must be between 3 and 200 characters")
+		return
+	}
+
+	if !ValidateStringLength(req.Content, 10, 10000) {
+		HandleValidationError(w, "Content must be between 10 and 10000 characters")
 		return
 	}
 

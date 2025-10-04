@@ -38,8 +38,16 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validasi input
-	if req.Content == "" {
-		respondError(w, http.StatusBadRequest, "Content is required")
+	valid, errMsg := ValidateRequired(map[string]string{
+		"content": req.Content,
+	})
+	if !valid {
+		HandleValidationError(w, errMsg)
+		return
+	}
+
+	if !ValidateStringLength(req.Content, 1, 1000) {
+		HandleValidationError(w, "Content must be between 1 and 1000 characters")
 		return
 	}
 
