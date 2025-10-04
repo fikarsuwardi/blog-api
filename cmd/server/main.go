@@ -55,6 +55,13 @@ func main() {
 	api.HandleFunc("/posts", handlers.GetPosts).Methods("GET")
 	api.HandleFunc("/posts/{id}", handlers.GetPost).Methods("GET")
 
+	// Comment routes (protected)
+	protected.HandleFunc("/posts/{post_id}/comments", handlers.CreateComment).Methods("POST")
+	protected.HandleFunc("/posts/{post_id}/comments/{comment_id}", handlers.DeleteComment).Methods("DELETE")
+
+	// Public comment routes
+	api.HandleFunc("/posts/{post_id}/comments", handlers.GetComments).Methods("GET")
+
 	// Start server
 	log.Printf("Server starting on port %s", cfg.ServerPort)
 	if err := http.ListenAndServe(":"+cfg.ServerPort, router); err != nil {
