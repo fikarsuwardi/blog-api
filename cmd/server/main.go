@@ -7,6 +7,7 @@ import (
 	"blog-api/internal/config"
 	"blog-api/internal/database"
 	"blog-api/internal/handlers"
+	"blog-api/internal/middleware"
 
 	"github.com/gorilla/mux"
 )
@@ -41,6 +42,18 @@ func main() {
 	// Auth routes
 	api.HandleFunc("/register", handlers.Register).Methods("POST")
 	api.HandleFunc("/login", handlers.Login).Methods("POST")
+
+	// Post routes (protected)
+	protected := api.PathPrefix("").Subrouter()
+	protected.Use(middleware.AuthMiddleware)
+
+	protected.HandleFunc("/posts", handlers.CreatePost).Methods("POST")
+	protected.HandleFunc("/posts/{id}", handlers.UpdatePost).Methods("PUT")
+	protected.HandleFunc("/posts/{id}", handlers.DeletePost).Methods("DELETE")
+
+	// Public post routes
+	api.HandleFunc("/posts", handlers.GetPosts).Methods("GET")
+	api.HandleFunc("/posts/{id}", handlers.GetPost).Methods("GET")
 
 	// Start server
 	log.Printf("Server starting on port %s", cfg.ServerPort)
